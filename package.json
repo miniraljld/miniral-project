@@ -1,0 +1,33 @@
+{
+  "name": "water-supply-monitoring-platform",
+  "version": "1.0.0",
+  "description": "Веб-платформа мониторинга и управления системами водоснабжения для хакатона «От источника к решению: цифровой путь к воде»",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && uvicorn main:app --reload",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd frontend && npm install",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "water-supply",
+    "monitoring",
+    "hacksaton",
+    "fastapi",
+    "react",
+    "postgresql"
+  ],
+  "author": "MNIRAL Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/water-supply-monitoring-platform.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/water-supply-monitoring-platform/issues"
+  },
+  "homepage": "https://github.com/your-username/water-supply-monitoring-platform#readme"
+}

@@ -1,0 +1,7 @@
+README.md
+setup.py
+water_supply_monitoring_platform.egg-info/PKG-INFO
+water_supply_monitoring_platform.egg-info/SOURCES.txt
+water_supply_monitoring_platform.egg-info/dependency_links.txt
+water_supply_monitoring_platform.egg-info/requires.txt
+water_supply_monitoring_platform.egg-info/top_level.txt

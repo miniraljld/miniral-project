@@ -1,0 +1,24 @@
+Metadata-Version: 2.4
+Name: water-supply-monitoring-platform
+Version: 1.0.0
+Summary: Веб-платформа мониторинга и управления системами водоснабжения
+Author: MNIRAL Team
+Requires-Python: >=3.8
+Requires-Dist: fastapi==0.115.0
+Requires-Dist: uvicorn[standard]==0.32.0
+Requires-Dist: sqlalchemy==2.0.35
+Requires-Dist: psycopg2-binary==2.9.9
+Requires-Dist: python-jose[cryptography]==3.3.0
+Requires-Dist: passlib[bcrypt]==1.7.4
+Requires-Dist: python-multipart==0.0.12
+Requires-Dist: pydantic==2.9.2
+Requires-Dist: pydantic-settings==2.6.1
+Requires-Dist: alembic==1.13.3
+Requires-Dist: python-dotenv==1.0.1
+Requires-Dist: cryptography==43.0.1
+Requires-Dist: requests==2.32.3
+Requires-Dist: click==8.1.7
+Dynamic: author
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
