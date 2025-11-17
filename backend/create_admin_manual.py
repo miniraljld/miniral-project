@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-Скрипт для создания администратора в базе данных
+Скрипт для ручного создания администратора в базе данных с фиксированными учетными данными
 """
 import os
 import sys
-from getpass import getpass
 
 # Добавляем путь к проекту
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -12,38 +11,19 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sqlalchemy.orm import Session
 from backend.config.database import SessionLocal, engine
 from backend.models.user import User, UserRole
-import enum
 from backend.utils.auth import get_password_hash
-
 
 def create_admin_user():
     """
-    Создает администратора в базе данных
+    Создает администратора в базе данных с фиксированными учетными данными
     """
     print("Создание администратора в базе данных...")
     
-    # Получаем данные от пользователя
-    username = input("Введите имя пользователя для администратора: ").strip()
-    if not username:
-        print("Имя пользователя не может быть пустым")
-        return False
-    
-    email = input("Введите email для администратора: ").strip()
-    if not email:
-        print("Email не может быть пустым")
-        return False
-    
-    full_name = input("Введите полное имя администратора (необязательно): ").strip()
-    
-    password = getpass("Введите пароль для администратора: ")
-    if not password:
-        print("Пароль не может быть пустым")
-        return False
-    
-    confirm_password = getpass("Подтвердите пароль: ")
-    if password != confirm_password:
-        print("Пароли не совпадают")
-        return False
+    # Учетные данные администратора
+    username = "admin"
+    password = "admin0772"
+    email = "admin@example.com"
+    full_name = "Administrator"
     
     # Создаем сессию базы данных
     db: Session = SessionLocal()
@@ -53,23 +33,21 @@ def create_admin_user():
         existing_user = db.query(User).filter(User.username == username).first()
         if existing_user:
             print(f"Пользователь с именем '{username}' уже существует")
-            return False
-        
-        # Проверяем, существует ли уже пользователь с таким email
-        existing_email = db.query(User).filter(User.email == email).first()
-        if existing_email:
-            print(f"Пользователь с email '{email}' уже существует")
-            return False
+            print(f"Обновляем роль пользователя на ADMIN")
+            existing_user.role = UserRole.ADMIN
+            db.commit()
+            print(f"Роль пользователя '{username}' обновлена до ADMIN")
+            return True
         
         # Создаем нового администратора
         hashed_password = get_password_hash(password)
         admin_user = User(
             username=username,
             email=email,
-            full_name=full_name if full_name else username,
+            full_name=full_name,
             hashed_password=hashed_password,
             is_active=True,
-            role=UserRole.ADMIN
+            role=UserRole.ADMIN  # Убедимся, что роль устанавливается как ADMIN
         )
         
         db.add(admin_user)
@@ -85,7 +63,6 @@ def create_admin_user():
         return False
     finally:
         db.close()
-
 
 if __name__ == "__main__":
     success = create_admin_user()

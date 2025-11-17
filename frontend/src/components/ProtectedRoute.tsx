@@ -24,7 +24,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (!userRole) {
     // Если роли нет в localStorage, пробуем получить её через API
-    const fetchUserRole = async () => {
+    const checkUserRole = async () => {
       try {
         const user = await userService.getCurrentUser();
         localStorage.setItem("userRole", user.role);
@@ -39,10 +39,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       }
     };
 
-    fetchUserRole();
+    // Выполняем проверку роли
+    checkUserRole();
     return <div>Загрузка информации о пользователе...</div>;
   }
 
+  // Проверяем права доступа в зависимости от требуемой роли
   if (requiredRole === "admin" && userRole !== "admin") {
     return <Navigate to={fallbackPath} replace />;
   }
@@ -50,6 +52,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (
     requiredRole === "engineer" &&
     !["engineer", "admin"].includes(userRole)
+  ) {
+    return <Navigate to={fallbackPath} replace />;
+  }
+
+  if (
+    requiredRole === "user" &&
+    !["user", "engineer", "admin"].includes(userRole)
   ) {
     return <Navigate to={fallbackPath} replace />;
   }

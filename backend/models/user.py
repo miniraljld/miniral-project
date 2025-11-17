@@ -6,9 +6,9 @@ from sqlalchemy import Enum
 from enum import Enum as PyEnum
 
 class UserRole(PyEnum):
-    USER = "user"
-    ENGINEER = "engineer"
-    ADMIN = "admin"
+    USER = "USER"
+    ENGINEER = "ENGINEER"
+    ADMIN = "ADMIN"
 
 
 class User(Base):

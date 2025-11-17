@@ -53,18 +53,27 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     }
 
     try {
+      // Создаем нового пользователя
       await userService.createUser({
         username,
         email,
         full_name: fullName,
         password,
         is_active: true,
-        role: "user",
+        role: "user", // Всегда создаем как обычного пользователя
       });
 
-      setSuccess(
-        "Регистрация прошла успешно! Теперь вы можете войти в систему."
-      );
+      // Автоматически выполняем вход после регистрации
+      const response = await userService.login({
+        username,
+        password,
+      });
+
+      // Сохраняем токен и информацию о пользователе
+      localStorage.setItem("token", response.access_token);
+      localStorage.setItem("username", response.username);
+
+      setSuccess("Регистрация прошла успешно!");
       setError("");
 
       // Очищаем форму
@@ -74,10 +83,14 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       setPassword("");
       setConfirmPassword("");
 
-      // Перенаправляем на страницу входа через 2 секунды
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+      // Перенаправляем в зависимости от роли, используя информацию из токена
+      if (response.role === "admin" || response.role === "engineer") {
+        // Администраторы и инженеры перенаправляются на административную панель
+        navigate("/admin/users");
+      } else {
+        // Обычные пользователи перенаправляются на главную страницу
+        navigate("/dashboard");
+      }
     } catch (err: any) {
       if (err.response && err.response.data && err.response.data.detail) {
         setError(err.response.data.detail);

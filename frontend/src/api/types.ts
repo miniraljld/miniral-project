@@ -20,6 +20,7 @@ export interface UserLoginResponse {
   token_type: string;
   user_id: number;
   username: string;
+  role: "user" | "engineer" | "admin";
 }
 
 export interface UserCreate {
@@ -28,7 +29,7 @@ export interface UserCreate {
   full_name?: string;
   password: string;
   is_active?: boolean;
-  role?: 'user' | 'engineer' | 'admin';
+  role?: "user" | "engineer" | "admin";
 }
 
 export interface UserUpdate {

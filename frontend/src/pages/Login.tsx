@@ -29,8 +29,14 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
         onLogin();
 
-        // Перенаправляем на дашборд
-        navigate("/dashboard");
+        // Перенаправляем в зависимости от роли пользователя
+        if (response.role === "admin" || response.role === "engineer") {
+          // Администраторы и инженеры перенаправляются на административную панель
+          navigate("/admin");
+        } else {
+          // Обычные пользователи перенаправляются на дашборд
+          navigate("/dashboard");
+        }
       } catch (err) {
         setError("Неверное имя пользователя или пароль");
         console.error("Ошибка аутентификации:", err);

@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { userService } from "./api/userService";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Dashboard from "./pages/Dashboard";
+import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Layout from "./components/Layout";
@@ -17,7 +17,6 @@ import ComplaintsPage from "./pages/ComplaintsPage";
 import AssetsPage from "./pages/AssetsPage";
 import DemandForecastingPage from "./pages/DemandForecastingPage";
 import NotificationsPage from "./pages/NotificationsPage";
-import UsersPage from "./pages/UsersPage";
 import AdminUsers from "./pages/AdminUsers";
 import "./App.css";
 
@@ -58,7 +57,7 @@ function App() {
 
   const handleLogin = useCallback(async () => {
     setIsAuthenticated(true);
-    
+
     // Загружаем информацию о текущем пользователе
     try {
       const user = await userService.getCurrentUser();
@@ -67,7 +66,7 @@ function App() {
     } catch (error) {
       console.error("Ошибка получения информации о пользователе:", error);
     }
- }, []);
+  }, []);
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem("token");
@@ -113,9 +112,7 @@ function App() {
           />
           <Route
             path="/"
-            element={
-              <Navigate to={isAuthenticated ? "/dashboard" : "/login"} />
-            }
+            element={<Navigate to={isAuthenticated ? "/home" : "/login"} />}
           />
           <Route
             path="/"
@@ -127,7 +124,11 @@ function App() {
               )
             }
           >
-            <Route path="/dashboard" element={<Dashboard />} />
+            {/* Маршруты для обычных пользователей */}
+            <Route path="/dashboard" element={<HomePage />} />
+            <Route path="/home" element={<HomePage />} />
+            {/* Маршрут для администраторов */}
+            <Route path="/admin" element={<Navigate to="/admin/users" />} />
             <Route
               path="/water-infrastructure"
               element={<WaterInfrastructurePage />}
@@ -140,12 +141,61 @@ function App() {
               element={<DemandForecastingPage />}
             />
             <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/users" element={<UsersPage />} />
+
+            {/* Маршруты для администраторов и инженеров */}
             <Route
               path="/admin/users"
               element={
-                <ProtectedRoute requiredRole="admin" fallbackPath="/dashboard">
+                <ProtectedRoute requiredRole="admin" fallbackPath="/home">
                   <AdminUsers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/water-infrastructure"
+              element={
+                <ProtectedRoute requiredRole="admin" fallbackPath="/home">
+                  <WaterInfrastructurePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/water-quality"
+              element={
+                <ProtectedRoute requiredRole="admin" fallbackPath="/home">
+                  <WaterQualityPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/complaints"
+              element={
+                <ProtectedRoute requiredRole="admin" fallbackPath="/home">
+                  <ComplaintsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/assets"
+              element={
+                <ProtectedRoute requiredRole="admin" fallbackPath="/home">
+                  <AssetsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/demand-forecasting"
+              element={
+                <ProtectedRoute requiredRole="admin" fallbackPath="/home">
+                  <DemandForecastingPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/notifications"
+              element={
+                <ProtectedRoute requiredRole="admin" fallbackPath="/home">
+                  <NotificationsPage />
                 </ProtectedRoute>
               }
             />

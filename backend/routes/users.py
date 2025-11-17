@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from backend.config.database import get_db
 from backend.models.user import User, UserRole
-from backend.schemas.user import UserCreate, UserUpdate, UserResponse
+from backend.schemas.user import UserCreate, UserUpdate, UserResponse, CurrentUserResponse
 from backend.utils.auth import get_password_hash, authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, get_current_active_user
 from backend.utils.role_checker import require_admin, require_delete_user, require_edit_user
 
@@ -51,6 +51,9 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.get("/{user_id}", response_model=UserResponse)
 def get_user(user_id: int, current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
+    """
+    Получение пользователя по ID
+    """
     # Проверяем права доступа к просмотру информации пользователя
     if current_user.role != UserRole.ADMIN and current_user.id != user_id:
         raise HTTPException(
@@ -58,16 +61,6 @@ def get_user(user_id: int, current_user: User = Depends(get_current_active_user)
             detail="Недостаточно прав для просмотра информации другого пользователя"
         )
     
-    db_user = db.query(User).filter(User.id == user_id).first()
-    if db_user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Пользователь не найден"
-        )
-    return db_user
-    """
-    Получение пользователя по ID
-    """
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
         raise HTTPException(
@@ -159,5 +152,24 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
         "access_token": access_token,
         "token_type": "bearer",
         "user_id": user.id,
-        "username": user.username
+        "username": user.username,
+        "role": user.role.value.lower() # Добавляем роль пользователя в ответ (в нижнем регистре)
+    }
+
+
+@router.get("/current")
+def get_current_user_profile(current_user: User = Depends(get_current_active_user)):
+    """
+    Получение информации о текущем пользователе
+    """
+    # Возвращаем словарь с ролью в нижнем регистре
+    return {
+        "id": current_user.id,
+        "username": current_user.username,
+        "email": current_user.email,
+        "full_name": current_user.full_name,
+        "is_active": current_user.is_active,
+        "role": current_user.role.value.lower(),
+        "created_at": current_user.created_at,
+        "updated_at": current_user.updated_at
     }

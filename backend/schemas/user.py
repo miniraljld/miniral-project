@@ -34,3 +34,17 @@ class UserResponse(UserBase):
 
     class Config:
         from_attributes = True
+
+
+class CurrentUserResponse(BaseModel):
+    id: int
+    username: str
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    is_active: bool = True
+    role: str  # Роль как строка для маршрута current
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
